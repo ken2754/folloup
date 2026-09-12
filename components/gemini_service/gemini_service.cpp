@@ -60,8 +60,10 @@ constexpr const char* kUploadUrl =
     "https://generativelanguage.googleapis.com/upload/v1beta/files";
 constexpr const char* kAudioMimeType = "audio/wav";
 constexpr const char* kTranscriptPrompt =
-    "Generate an English verbatim transcript of the speech in this Japanese audio."
-    "Respond with English transcript text only. Do not add commentary or formatting.";
+    "Transcribe the provided Japanese audio and provide a concise summary of the content in English."
+    "Constraints:"
+    "- Output only the English summary text."
+    "- Do not add any suggestions, advice, formatting, follow-up questions, or conversational remarks.";
 constexpr int kTranscribeTimeoutMs = 30000;
 constexpr size_t kHttpUploadChunkSamples = 2048;
 

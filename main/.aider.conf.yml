@@ -1,0 +1,18 @@
+# Aider 設定ファイル
+model: gemini/gemini-3.1-pro
+
+# 変更適用時に Git コミットを自動作成
+auto-commits: true
+
+# 常にコンテキストへ含める仕様・規約ファイル
+read:
+  - CONVENTIONS.md
+
+# 出力ストリーミングを有効化
+stream: true
+
+# リポジトリマップのトークン上限
+map-tokens: 2048
+
+# ビルド実行時のシェルコマンド
+auto-lint: false
