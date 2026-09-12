@@ -1,0 +1,114 @@
+#ifndef EPAPER_UI_RENDER_UTILS_H_
+#define EPAPER_UI_RENDER_UTILS_H_
+
+#include <cstdint>
+#include <string>
+#include <string_view>
+#include <vector>
+
+#include "design_tokens.h"
+#include "asset_types.h"
+#include "epaper_ui/font_renderer.h"
+#include "epaper_ui/overlay_geometry.h"
+
+namespace epaper_ui {
+
+int ClampPositive(int value);
+// Invoke `fn(dx, dy)` for every stroke offset in the (2t+1)^2 neighborhood except the center,
+// matching followup's outline pass used to knock content out against a filled background.
+template <typename DrawFn>
+void ForEachOutlineOffset(int stroke_thickness, DrawFn&& fn)
+{
+    const int thickness = ClampPositive(stroke_thickness);
+    for (int dy = -thickness; dy <= thickness; ++dy) {
+        for (int dx = -thickness; dx <= thickness; ++dx) {
+            if (dx == 0 && dy == 0) {
+                continue;
+            }
+            fn(dx, dy);
+        }
+    }
+}
+// Greedy word-wrap of `text` into lines that each fit `max_width` for the given typography
+// role. Returns the whole text as a single line when max_width <= 0 or it already fits.
+std::vector<std::string> WrapTextToWidth(design::TypographyRole role,
+                                         const std::string& text,
+                                         int max_width);
+// Truncate `text` with a trailing ellipsis so it fits `max_width`. Returns empty when even
+// the ellipsis will not fit.
+std::string FitLabelText(design::TypographyRole role, const std::string& text, int max_width);
+int CenterOffset(int container_size, int item_size);
+bool ShouldDrawBlackForTone(int x, int y, uint8_t tone);
+void DrawPortraitPixel(uint8_t* framebuffer,
+                       int raw_width,
+                       int raw_height,
+                       int portrait_width,
+                       int portrait_height,
+                       int x,
+                       int y,
+                       bool black);
+void FillPortraitRect(uint8_t* framebuffer,
+                      int raw_width,
+                      int raw_height,
+                      int portrait_width,
+                      int portrait_height,
+                      const UiRect& rect,
+                      uint8_t tone);
+void DrawPortraitBorder(uint8_t* framebuffer,
+                        int raw_width,
+                        int raw_height,
+                        int portrait_width,
+                        int portrait_height,
+                        const UiRect& rect,
+                        int thickness,
+                        uint8_t tone);
+void FillRoundedPortraitRect(uint8_t* framebuffer,
+                             int raw_width,
+                             int raw_height,
+                             int portrait_width,
+                             int portrait_height,
+                             const UiRect& rect,
+                             int radius,
+                             uint8_t tone);
+void DrawRoundedPortraitBorder(uint8_t* framebuffer,
+                               int raw_width,
+                               int raw_height,
+                               int portrait_width,
+                               int portrait_height,
+                               const UiRect& rect,
+                               int radius,
+                               int thickness,
+                               uint8_t tone);
+void DrawPortraitMonoAsset(uint8_t* framebuffer,
+                           int raw_width,
+                           int raw_height,
+                           int portrait_width,
+                           int portrait_height,
+                           int x,
+                           int y,
+                           const EmbeddedImageAsset* asset,
+                           uint8_t tone);
+// Nearest-neighbour scale a mono asset into `dest` (used to draw small source icons at a larger
+// display size, e.g. 36px assets shown at the 64px empty-state size).
+void DrawScaledPortraitMonoAsset(uint8_t* framebuffer,
+                                 int raw_width,
+                                 int raw_height,
+                                 int portrait_width,
+                                 int portrait_height,
+                                 const UiRect& dest,
+                                 const EmbeddedImageAsset* asset,
+                                 uint8_t tone);
+void DrawTypographyText(uint8_t* framebuffer,
+                        int raw_width,
+                        int raw_height,
+                        int portrait_width,
+                        int portrait_height,
+                        int x,
+                        int y,
+                        std::string_view text,
+                        design::TypographyRole role,
+                        uint8_t tone);
+
+}  // namespace epaper_ui
+
+#endif  // EPAPER_UI_RENDER_UTILS_H_
