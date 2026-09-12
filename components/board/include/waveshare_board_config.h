@@ -73,7 +73,7 @@
 #define WAVESHARE_AUDIO_PA_PIN          GPIO_NUM_39
 // Full scale. The ES8311 feeds an NS4150B into a small MX1.25 speaker, so there is
 // no headroom to spare -- anything below this is audibly quiet in the hand.
-#define WAVESHARE_AUDIO_OUTPUT_VOLUME   100
+#define WAVESHARE_AUDIO_OUTPUT_VOLUME   70
 
 #define WAVESHARE_I2C_GLITCH_IGNORE_CNT 7
 #define WAVESHARE_I2C_SPEED_HZ          400000
